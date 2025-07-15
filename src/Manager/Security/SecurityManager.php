@@ -4,7 +4,6 @@ namespace App\Manager\Security;
 
 use App\Utils\Fonctions;
 use App\Utils\Constants;
-use App\Sms\SecuritySms;
 use App\Entity\Admin\User;
 use App\Utils\TypeVariable;
 use App\Security\JwtEncoder;
@@ -17,6 +16,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\Extra\RefreshTokenRepository;
+use App\Utils\FonctionUtil;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
@@ -135,8 +135,8 @@ class SecurityManager
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
             //Envoi de mail
-            $this->securityMailing->disabled($user);
-            $this->securitySms->disabled($user);
+          //  $this->securityMailing->disabled($user);
+          //  $this->securitySms->disabled($user);
         }
         if (!$user->isEnabled()) {
             throw new ExceptionApi(
@@ -146,8 +146,8 @@ class SecurityManager
             );
            
             //Envoi de mail
-            $this->securityMailing->enabled($user);
-            $this->securitySms->enabled($user);
+           // $this->securityMailing->enabled($user);
+           // $this->securitySms->enabled($user);
         }
       
         //On verifie les autorisation d'acces ADMIN
@@ -171,10 +171,6 @@ class SecurityManager
         if (
             $this->isPlateform($body['type']) &&
             ($body['type'] === 'MOBILE') &&
-            (Constants::USER_ROLES["MARCHAND"] !== $user->getRoles()[0]) &&
-            // (Constants::USER_ROLES["CUSTOMER"] !== $user->getRoles()[0]) &&
-            // (Constants::USER_ROLES["TENANT"] !== $user->getRoles()[0]) &&
-            // (Constants::USER_ROLES["AGENT"] !== $user->getRoles()[0]) &&
             (Constants::USER_ROLES["AGENCY"] !== $user->getRoles()[0])
         ) {
             throw new ExceptionApi(
@@ -240,15 +236,12 @@ class SecurityManager
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
-        // $password = Fonctions::password(8);
-        // $user
-        //     // ->setPassword($this->passwordEncoder->encodePassword($user, $password))
-        //     // ->setlastLogin(null);
-        // $this->em->persist($user);
+        $password = FonctionUtil::password(8);
+        $user
+            ->setPassword($this->passwordEncoder->encodePassword($user, $password))
+            ->setlastLogin(null);
+        $this->em->persist($user);
         $this->em->flush();
-        //Envoi d'SMS et Mail
-      //  $this->securityMailing->forgotPassword($user, $password);
-        $this->securitySms->forgotPassword($user, $data->password);
         return $user;
     }
 
