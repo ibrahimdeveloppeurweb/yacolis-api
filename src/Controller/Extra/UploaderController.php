@@ -24,7 +24,7 @@ class UploaderController extends AbstractController
         FileRepository $fileRepository
     ) {
         $this->em = $em;
-        // $this->uploadManager = $uploadManager;
+         $this->uploadManager = $uploadManager;
         $this->fileRepository = $fileRepository;
     }
 

@@ -104,6 +104,11 @@ class User implements UserInterface
     private $isEnabled = false;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $confirmationToken;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"user"})
      */
@@ -147,9 +152,20 @@ class User implements UserInterface
      */
     private $admin;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Service::class, mappedBy="responsable")
+     */
+    private $services;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Service::class, inversedBy="users")
+     */
+    private $service;
+
     public function __construct()
     {
         $this->droits = new ArrayCollection();
+        $this->services = new ArrayCollection();
     }
 
     
@@ -227,6 +243,18 @@ class User implements UserInterface
     public function setIsFirst(bool $isFirst): self
     {
         $this->isFirst = $isFirst;
+
+        return $this;
+    }
+
+        public function getConfirmationToken(): ?string
+    {
+        return $this->confirmationToken;
+    }
+
+    public function setConfirmationToken(?string $confirmationToken): self
+    {
+        $this->confirmationToken = $confirmationToken;
 
         return $this;
     }
@@ -506,5 +534,47 @@ class User implements UserInterface
         
 
         return $refreshToken;
+    }
+
+    /**
+     * @return Collection<int, Service>
+     */
+    public function getServices(): Collection
+    {
+        return $this->services;
+    }
+
+    public function addService(Service $service): self
+    {
+        if (!$this->services->contains($service)) {
+            $this->services[] = $service;
+            $service->setResponsable($this);
+        }
+
+        return $this;
+    }
+
+    public function removeService(Service $service): self
+    {
+        if ($this->services->removeElement($service)) {
+            // set the owning side to null (unless already changed)
+            if ($service->getResponsable() === $this) {
+                $service->setResponsable(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): self
+    {
+        $this->service = $service;
+
+        return $this;
     }
 }

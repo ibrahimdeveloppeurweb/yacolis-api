@@ -198,7 +198,7 @@ class SecurityManager
 
         $this->username = $user->getUsername();
         $this->isFirstUser = $user->getIsFirst();
-       // $this->roles = $user->getRoles()[0];
+       $this->roles = $user->getRoles()[0];
 
         /*
          * Générons un nouveau token de rafraichissement
@@ -310,18 +310,11 @@ class SecurityManager
             // ->setAutorisation($user->getAgency() !== null ? $user->getAgency()->getAutorisation()  : null)
             ->setPermissions($user->getPermissions())
             ->setToken($token)
-            // ->setRole($this->roles)
+             ->setRole($this->roles)
             ->setTelephone($user->getContact())
             ->setEmail($user->getEmail())
             ->setIsFirstUser($this->isFirstUser)
-            // ->setCountry($user->getPays())
-            // ->setDevice($user->getDevice())
             ->setUuid($user->getUuid())
-            // ->setPrcFraisOrange($prcFraisOrange)
-            // ->setPrcFraisMtn($prcFraisMtn)
-            // ->setPrcFraisMoov($prcFraisMoov)
-            // ->setPrcFraisWave($prcFraisWave)
-            // ->setPrcFraisDebitcard($prcFraisDebitcard)
             ->setLastLogin($user->getLastLogin());
             // ->setPath($user->getPath());
 

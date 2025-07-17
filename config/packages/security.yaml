@@ -35,13 +35,14 @@ security:
             anonymous: true
 
         api:
-            pattern:   ^/api
+            pattern:   ^/api(?!/doc)
             stateless: true
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
     access_control:
+        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/printer, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/private, allow_if: "user.getRoles() and user.getRoles()[0] in ['ROLE_USER_ADMIN', 'ROLE_USER_SHOP', 'ROLE_USER_SHIPPING', 'ROLE_USER_COMMPAGNY', 'ROLE_USER_CUSTOMER']
           and user.isAuthorized(request.getPathInfo())"}

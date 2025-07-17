@@ -249,11 +249,11 @@ class User
         return $this->role;
     }
 
-    // public function setRole(string $role): self
-    // {
-    //     $this->role = $role;
-    //     return $this;
-    // }
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
+        return $this;
+    }
 
     public function getCountry()
     {
