@@ -12,6 +12,7 @@ use App\Traits\EntityTrait;
 use App\Traits\FolderTrait;
 use App\Traits\PhotoTrait;
 use App\Traits\SearchableTrait;
+use App\Annotation\Searchable;
 use App\Traits\UserObjectNoCodeTrait;
 use App\Utils\Constants;
 use Doctrine\Common\Collections\Collection;
@@ -85,6 +86,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Searchable()
      */
     private $username;
 
@@ -452,18 +454,21 @@ class User implements UserInterface
         return $this;
     }
 
+     /**
+     * @Groups({"user"})
+     */
     public function getSearchableTitle(): string
     {
 
-        $nom = "";
-        return $nom;
+       return $this->getLibelle();
     }
 
+     /**
+     * @Groups({"user"})
+     */
     public function getSearchableDetail(): string
     {
-        $nom = "";
-
-        return $nom;
+        return 'E-mail: ' . $this->username;
     }
 
     public function getFolderPath(): string

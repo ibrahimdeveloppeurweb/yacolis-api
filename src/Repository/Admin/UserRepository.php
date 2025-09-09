@@ -24,6 +24,45 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
+     * Liste des utilisateurs en fonction du service (ADMIN ou AGENCY)
+     * @return User[] Returns an array of User objects
+    */
+    public function findByService($verif, $service, $agency)
+    {
+        $query = $this->createQueryBuilder('u');
+        if ($verif === "ADMIN") {
+            $query = $query->andWhere('u.admin IS NOT NULL');
+        } elseif ($verif === "AGENCY" && $agency !== null) {
+            $query = $query
+                ->andWhere('u.agency IS NOT NULL')
+                ->andWhere('u.agency = :agency')
+                ->setParameter('agency', $agency)
+            ;
+        }
+        if ($service && $service !== null && $service !== 'null') {
+            $query
+                ->join('u.service', 's')
+                ->andWhere('s.nom LIKE :nom')
+                ->setParameter('nom', '%'.$service.'%')
+            ;
+        }
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Liste des utilisateurs admin
+     * @return User[] Returns an array of User objects
+    */
+    public function findByAdmin()
+    {
+        $query = $this->createQueryBuilder('u')
+            ->andWhere('u.admin IS NOT NULL')
+            ->setMaxResults(20)
+        ;
+        return $query->getQuery()->getResult();
+    }
+
+    /**
      * @throws ORMException
      * @throws OptimisticLockException
      */

@@ -6,6 +6,7 @@ use App\Entity\Admin\User;
 use App\Entity\Extra\File;
 use App\Entity\Extra\Folder;
 use App\Repository\Admin\AgencyRepository;
+use App\Repository\Admin\UserRepository;
 use App\Repository\Extra\FolderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -51,12 +52,14 @@ class UploaderManager
     ];
     private $agencyRepository;
     private $folderRepository;
+    private $userRepository;
 
     public function __construct(
         EntityManagerInterface $em, 
         AgencyRepository $agencyRepository,
         FolderRepository $folderRepository,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+         UserRepository $userRepository,
     ) {
         if ($tokenStorage->getToken()) {
             $this->user = $tokenStorage->getToken()->getUser();
@@ -64,6 +67,7 @@ class UploaderManager
         $this->em = $em;
         $this->agencyRepository = $agencyRepository;
         $this->folderRepository = $folderRepository;
+        $this->userRepository = $userRepository;
     }
     
     public function base64($data, $entity)
@@ -229,7 +233,15 @@ class UploaderManager
     {
         $data = \json_decode($request->getContent());
         $agency = $this->agencyRepository->findOneByUuid($data->agency); 
-        $this->tempFolder .= $this->uploadFolder . 'uploads/' . $agency->getUuid() . '_' .str_replace(' ', '', $agency->getNom()). '/' . $data->path.  '/';
+        $user = $this->userRepository->findOneBy(['isFirst' => true]); 
+        if ($agency) {
+         $this->tempFolder .= $this->uploadFolder . 'uploads/' . $agency->getUuid() . '_' .str_replace(' ', '', $agency->getNom()). '/' . $data->path.  '/';
+
+        } else {
+         $this->tempFolder .= $this->uploadFolder . 'uploads/' . $user->getUuid() . '_' .str_replace(' ', '', $user->getNom()). '/' . $data->path.  '/';
+
+        }
+        
 
         // On verifie ici que l'utilisateur en cours à bien l'autorisation d'uploader des fichiers sur le serveur
         if (!$this->isUserAllowedToUpload()) {

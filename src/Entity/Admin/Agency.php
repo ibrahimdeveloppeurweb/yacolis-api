@@ -3,6 +3,7 @@
 namespace App\Entity\Admin;
 
 use App\Entity\Admin\User;
+use App\Entity\Extra\Role;
 use App\Repository\Admin\AgencyRepository;
 use App\Traits\EntityTrait;
 use App\Traits\FolderTrait;
@@ -82,10 +83,16 @@ class Agency
      */
     private $services;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Role::class, mappedBy="agency")
+     */
+    private $roles;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->services = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -203,6 +210,36 @@ class Agency
             // set the owning side to null (unless already changed)
             if ($service->getAgency() === $this) {
                 $service->setAgency(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+            $role->setAgency($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->removeElement($role)) {
+            // set the owning side to null (unless already changed)
+            if ($role->getAgency() === $this) {
+                $role->setAgency(null);
             }
         }
 

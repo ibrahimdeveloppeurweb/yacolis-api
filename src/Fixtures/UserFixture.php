@@ -8,7 +8,7 @@ use App\Entity\Admin\Admin;
 use App\Helpers\RouteHelper;
 use Doctrine\Persistence\ObjectManager;
 use App\Repository\Admin\UserRepository;
-use App\Repository\Extra\PathRepository as ExtraPathRepository;
+use App\Repository\Extra\PathRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -21,7 +21,7 @@ class UserFixture extends Fixture
     public function __construct(
         UserPasswordEncoderInterface $passwordEncoder,
         UserRepository $userRepository,
-        ExtraPathRepository $pathRepository,
+        PathRepository $pathRepository,
     )
     {
         $this->passwordEncoder = $passwordEncoder;
@@ -42,6 +42,7 @@ class UserFixture extends Fixture
                 ->setNom('Accès super administrateur')
                 ->setDescription('Accès super administrateur')
                 ->setCreatedAt(new \DateTime('now'))
+                ->setIsFirst(true)
             ;
             $paths = RouteHelper::ADMIN_ROUTE($pathsRow);
             foreach ($paths as $path) {

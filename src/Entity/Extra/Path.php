@@ -7,6 +7,9 @@ use App\Traits\UserObjectNoCodeTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+
 
 /**
  * @ORM\Entity(repositoryClass=PathRepository::class)
@@ -27,31 +30,37 @@ class Path
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"path", "role"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"path", "role"})
      */
     private $chemin;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"path", "role"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"path", "role"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"path", "role"})
      */
     private $type = Path::TYPE['CLIENT'];
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"path", "role"})
      */
     private $permission;
 

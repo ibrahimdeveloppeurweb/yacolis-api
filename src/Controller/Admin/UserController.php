@@ -27,13 +27,19 @@ class UserController extends AbstractController
         $this->userManager = $userManager;
     }
 
-    /**
+     /**
      * @Route("/", name="index_user_admin", methods={"GET"},
      * options={"description"="Liste des utilisateurs admin", "permission"="USER:ADMIN:LIST"})
      */
     public function index(Request $request)
     {
-       
+        $data = \json_decode(json_encode($request->query->all()));
+        if ( isset( $data->service) && TypeVariable::is_not_null($data->service)) {
+            $users = $this->userRepository->findByService('ADMIN', $data->service, null);
+            return $this->json($users, 200, [], ['groups' => ["user", "file", "photo"]]);
+        }
+        $users = $this->userRepository->findByAdmin();
+        return $this->json($users, 200, [], ['groups' => ["user", "file", "photo"]]);
     }
 
     /**

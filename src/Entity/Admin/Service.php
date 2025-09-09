@@ -4,6 +4,7 @@ namespace App\Entity\Admin;
 
 use App\Repository\Admin\ServiceRepository;
 use App\Traits\EntityTrait;
+use App\Annotation\Searchable;
 use App\Traits\SearchableTrait;
 use App\Traits\UserObjectNoCodeTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -31,6 +32,7 @@ class Service
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Searchable()
      */
     private $nom;
 

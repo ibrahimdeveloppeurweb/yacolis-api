@@ -2,6 +2,7 @@
 
 namespace App\Entity\Extra;
 
+use App\Entity\Admin\Agency;
 use App\Entity\Admin\User;
 use App\Repository\Extra\RoleRepository;
 use App\Traits\SearchableTrait;
@@ -11,6 +12,8 @@ use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use App\Annotation\Searchable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=RoleRepository::class)
@@ -30,6 +33,8 @@ class Role
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"role","user"})
+     * @Searchable()
      */
     private $nom;
 
@@ -40,11 +45,13 @@ class Role
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"role","user"})
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=Path::class, mappedBy="roles")
+     * @Groups({"role"})
      */
     private $paths;
 
@@ -52,6 +59,16 @@ class Role
      * @ORM\ManyToMany(targetEntity=User::class, mappedBy="droits")
      */
     private $users;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isFirst;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Agency::class, inversedBy="roles")
+     */
+    private $agency;
 
     public function __construct()
     {
@@ -166,6 +183,30 @@ class Role
         if ($this->users->removeElement($user)) {
             $user->removeDroit($this);
         }
+
+        return $this;
+    }
+
+    public function getIsFirst(): ?bool
+    {
+        return $this->isFirst;
+    }
+
+    public function setIsFirst(?bool $isFirst): self
+    {
+        $this->isFirst = $isFirst;
+
+        return $this;
+    }
+
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): self
+    {
+        $this->agency = $agency;
 
         return $this;
     }
